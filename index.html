@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Brickday – tasks, XP, rewards</title>
+<title>Brickday</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='10' width='50' height='50' rx='9' fill='%231F2340'/%3E%3Crect x='4' y='4' width='50' height='50' rx='9' fill='%23F7D257' stroke='%231F2340' stroke-width='5'/%3E%3Cg fill='%23FFF0A8' stroke='%231F2340' stroke-width='3'%3E%3Ccircle cx='19' cy='19' r='5.5'/%3E%3Ccircle cx='39' cy='19' r='5.5'/%3E%3Ccircle cx='19' cy='39' r='5.5'/%3E%3Ccircle cx='39' cy='39' r='5.5'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
 :root{
   --bg:#FAF8FF;--surface:#FFFFFF;--ink:#1F2340;--muted:#5C6085;
   --purple:#A8A4FF;--purple-d:#7F7BF0;--yellow:#F7D257;--mint:#6FE8B4;--coral:#FF8F7A;
-  --easy-t:#C6F3DC;--med-t:#F9E6A6;--hard-t:#FFCDBF;
+  --easy-t:#C6F3DC;--med-t:#F9E6A6;--hard-t:#FFCDBF;--xhard-t:#D9D6FF;
   --g0:#E4E2EE;--g1:#C3EBC2;--g2:#5DBB63;--g3:#24823A;
   --dots:#DDD8F5;--page:#D3EAFF;--stud-a:#B6D6F7;--stud-b:#EAF5FF;color-scheme:light;
   --sh:4px 4px 0 var(--ink);
@@ -54,13 +54,13 @@ h1{font-size:clamp(34px,6vw,46px);line-height:1.05;letter-spacing:-.03em;font-we
 .card{background:var(--surface);border:2.5px solid var(--ink);border-radius:10px 10px 10px 2px;box-shadow:var(--sh);padding:18px}
 .list{display:grid;gap:18px}
 .task{display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:start}
-.task.easy{background:var(--easy-t)}.task.medium{background:var(--med-t)}.task.hard{background:var(--hard-t)}
+.task.easy{background:var(--easy-t)}.task.medium{background:var(--med-t)}.task.hard{background:var(--hard-t)}.task.xhard{background:var(--xhard-t)}
 .task.done{opacity:.75}.task.done h3{text-decoration:line-through;text-decoration-thickness:2px}
 .task h3,.reward h3{margin:0;font-size:22px;line-height:1.2;font-weight:800;letter-spacing:-.01em;overflow-wrap:anywhere}
 .task p{margin:4px 0 0;color:var(--muted);overflow-wrap:anywhere}
 .meta{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
 .tag{font-weight:800;font-size:13px;border:2px solid var(--ink);border-radius:5px 5px 5px 1px;padding:1px 8px;color:#1F2340}
-.tag.easy{background:var(--mint)}.tag.medium{background:var(--yellow)}.tag.hard{background:var(--coral)}.tag.xp{background:var(--purple)}.tag.rep{background:var(--surface)}
+.tag.easy{background:var(--mint)}.tag.medium{background:var(--yellow)}.tag.hard{background:var(--coral)}.tag.xhard{background:var(--purple)}.tag.xp{background:var(--purple)}.tag.rep{background:var(--surface)}
 .side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .reward{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
 .reward .cost{margin-top:6px}
@@ -102,7 +102,48 @@ textarea{resize:vertical;min-height:64px}
 .link.danger{color:#D12F36}
 .modal h3{margin:0;font-size:22px}
 .modal p{margin:0;color:var(--muted);overflow-wrap:anywhere}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.quick{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}.quick input{flex:1;min-width:0}
+.qbox{flex:1;min-width:0;display:flex;background:var(--bg);border:2.5px solid var(--ink);border-radius:6px 6px 6px 1px;box-shadow:inset 2px 2px 0 rgba(31,35,64,.12)}
+.qbox:focus-within{outline:3px solid var(--purple-d);outline-offset:2px}
+.qbox input{border:0;box-shadow:none;background:transparent;border-radius:0;outline:none}
+.dp{position:relative;display:flex;flex:none;border-left:2px solid var(--g0)}
+.dp-btn{font:inherit;font-weight:700;font-size:14px;color:var(--ink);background:transparent;border:0;display:flex;align-items:center;gap:8px;padding:0 12px;cursor:pointer}
+.dp-btn .chev{font-size:11px;opacity:.7}
+.sw{flex:none;width:14px;height:14px;border:2px solid var(--ink);border-radius:3px 3px 3px 1px;background:var(--mint)}
+.easy .sw{background:var(--mint)}.medium .sw{background:var(--yellow)}.hard .sw{background:var(--coral)}.xhard .sw{background:var(--purple)}
+.dp-list{position:absolute;right:0;top:calc(100% + 8px);z-index:15;min-width:230px;margin:0;padding:6px;list-style:none;display:grid;gap:2px;background:var(--surface);border:2.5px solid var(--ink);border-radius:8px 8px 8px 2px;box-shadow:var(--sh)}
+.dp-item{font:inherit;width:100%;display:flex;align-items:center;gap:10px;text-align:left;color:var(--ink);background:none;border:0;border-radius:5px;padding:10px;cursor:pointer}
+.dp-item .nm{flex:1;font-weight:700}.dp-item .xp{font-weight:700;font-size:13px;color:var(--muted)}
+.dp-item:hover,.dp-item.on{background:var(--bg)}
+.dp-btn:focus-visible,.dp-item:focus-visible{outline:3px solid var(--purple-d);outline-offset:2px}
+
+
+@media (max-width:520px){.qbox{flex-basis:100%}}
+
+.menu{position:relative}
+.dots{font:inherit;font-weight:800;font-size:20px;line-height:1;width:38px;height:34px;color:var(--ink);background:var(--surface);border:2.5px solid var(--ink);border-radius:6px 6px 6px 1px;box-shadow:2px 2px 0 var(--ink);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.dots:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.dots:focus-visible,.menu-item:focus-visible{outline:3px solid var(--purple-d);outline-offset:2px}
+.menu-list{position:absolute;right:0;top:calc(100% + 6px);z-index:15;min-width:130px;display:grid;padding:4px;background:var(--surface);border:2.5px solid var(--ink);border-radius:8px 8px 8px 2px;box-shadow:var(--sh)}
+.menu-item{font:inherit;font-weight:700;text-align:left;color:var(--ink);background:none;border:0;border-radius:5px;padding:10px 12px;cursor:pointer}
+.menu-item:hover{background:var(--bg)}.menu-item.danger{color:#D12F36}
+.mini{width:auto;padding:5px 10px;font-weight:700;font-size:14px}
+.streak{font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);border-radius:6px 6px 6px 1px;padding:5px 10px;box-shadow:2px 2px 0 var(--ink)}
+.reward.ready{background:var(--easy-t)}
+.lock{min-width:220px;margin-top:10px}
+.bar.sm{height:12px}
+.togo{font-size:13px;color:var(--muted);margin-top:4px;font-weight:600}
+
+@media (pointer:coarse),(max-width:820px){.link{display:inline-flex;align-items:center;padding:10px 8px;min-height:44px}.btn.sm,.mini,.dots,.menu-item,.dp-btn,.dp-item{min-height:44px}}
+.flash{position:fixed;inset:0;z-index:40;pointer-events:none;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at center,rgba(18,20,44,.28) 0,rgba(18,20,44,.72) 100%);-webkit-backdrop-filter:blur(14px) grayscale(.55);backdrop-filter:blur(14px) grayscale(.55);animation:flashbg 3.6s ease-in-out forwards}
+.flash-xp{position:relative;font-variant-numeric:tabular-nums;font-size:clamp(72px,20vw,190px);font-weight:800;line-height:1;color:var(--yellow);-webkit-text-stroke:5px var(--ink);paint-order:stroke fill;text-shadow:6px 6px 0 var(--ink);animation:flashtxt 3.6s cubic-bezier(.2,.6,.3,1) forwards}
+.flash-xp::after{content:attr(data-t);position:absolute;inset:0;color:var(--yellow);-webkit-text-stroke:0;text-shadow:none;filter:blur(8px);opacity:0;animation:flashecho 3.6s ease-out forwards}
+
+@keyframes flashbg{0%{opacity:0}18%{opacity:1}86%{opacity:1}100%{opacity:0}}
+@keyframes flashtxt{0%{opacity:0;transform:translateY(14px) scale(.9);letter-spacing:-.04em}18%{opacity:1}86%{opacity:1}100%{opacity:0;transform:translateY(-14px) scale(1.1);letter-spacing:.03em}}
+@keyframes flashecho{0%,14%{opacity:0;transform:scale(1)}26%{opacity:.55}100%{opacity:0;transform:scale(1.5)}}
+@keyframes flashfade{0%{opacity:0}10%{opacity:1}78%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.flash-xp{animation-name:flashbg}.flash-xp::after{display:none}*{transition:none!important}}
 </style>
 </head>
 <body>
@@ -116,21 +157,15 @@ const html=htm.bind(React.createElement);
 
 /* ---------- logic ---------- */
 const KEY='brickday:v1';
-const XP={easy:10,medium:15,hard:20};
-const LABEL={easy:'Easy',medium:'Medium',hard:'Hard'};
+const XP={easy:10,medium:15,hard:20,xhard:30};
+const LABEL={easy:'Easy',medium:'Medium',hard:'Hard',xhard:'Extra Hard'};
 const pad=n=>String(n).padStart(2,'0');
 const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const startOfToday=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 // A recurring task is "done" for one period (a day, or a week starting Sunday), then resets.
 const periodKey=(r,d)=>{const x=new Date(d);if(r==='weekly')x.setDate(x.getDate()-x.getDay());return dkey(x)};
-const seed=()=>({
-  tasks:[
-    {id:uid(),title:'Reply to pending emails',desc:'Clear the inbox backlog',difficulty:'easy',done:false},
-    {id:uid(),title:'Write the project outline',desc:'One page, three sections',difficulty:'medium',done:false},
-    {id:uid(),title:'Finish the report draft',desc:'Include charts and a summary',difficulty:'hard',done:false}],
-  rewards:[{id:uid(),name:'Watch a movie',cost:100},{id:uid(),name:'Buy something nice',cost:300}],
-  redeemed:[],activity:{},earned:0,spent:0});
+const seed=()=>({tasks:[],rewards:[],redeemed:[],activity:{},earned:0,spent:0});
 function load(){
   try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.tasks)return r}catch(e){}
   return seed();
@@ -161,35 +196,63 @@ function Navbar({page,balance,level}){
 }
 
 /* ---------- Tasks ---------- */
-function TaskForm({initial,onSave,onCancel}){
-  const [t,setT]=useState(initial||{title:'',desc:'',difficulty:'easy',repeat:''});
+function MoreMenu({items}){
+  const [open,setOpen]=useState(false);
+  useEffect(()=>{
+    if(!open)return;
+    const close=()=>setOpen(false),key=e=>{if(e.key==='Escape')close()};
+    const id=setTimeout(()=>addEventListener('click',close),0);
+    addEventListener('keydown',key);
+    return()=>{clearTimeout(id);removeEventListener('click',close);removeEventListener('keydown',key)};
+  },[open]);
+  return html`<div className="menu">
+    <button type="button" className="dots" aria-label="More actions" aria-haspopup="menu" aria-expanded=${open} onClick=${e=>{e.stopPropagation();setOpen(o=>!o)}}>⋯</button>
+    ${open&&html`<div className="menu-list" role="menu">${items.map(i=>html`<button key=${i.label} type="button" role="menuitem" className=${'menu-item'+(i.danger?' danger':'')} onClick=${()=>{setOpen(false);i.run()}}>${i.label}</button>`)}</div>`}
+  </div>`;
+}
+function DiffPicker({value,onChange}){ // custom list so every option is clear: colour, name and XP
+  const [open,setOpen]=useState(false);
+  useEffect(()=>{
+    if(!open)return;
+    const close=()=>setOpen(false),key=e=>{if(e.key==='Escape')close()};
+    const id=setTimeout(()=>addEventListener('click',close),0);
+    addEventListener('keydown',key);
+    return()=>{clearTimeout(id);removeEventListener('click',close);removeEventListener('keydown',key)};
+  },[open]);
+  return html`<div className=${'dp '+value}>
+    <button type="button" className="dp-btn" aria-haspopup="listbox" aria-expanded=${open} aria-label=${'Difficulty: '+LABEL[value]+', '+XP[value]+' XP'} onClick=${e=>{e.stopPropagation();setOpen(o=>!o)}}><i className="sw"></i>${LABEL[value]}<span className="chev">▾</span></button>
+    ${open&&html`<ul className="dp-list" role="listbox">${Object.keys(XP).map(k=>html`<li key=${k}><button type="button" role="option" aria-selected=${k===value} className=${'dp-item '+k+(k===value?' on':'')} onClick=${()=>{onChange(k);setOpen(false)}}><i className="sw"></i><span className="nm">${LABEL[k]}</span><span className="xp">${XP[k]} XP</span></button></li>`)}</ul>`}
+  </div>`;
+}
+function TaskForm({initial,draft,onSave,onCancel}){
+  const [t,setT]=useState(initial||draft||{title:'',desc:'',difficulty:'easy',repeat:''});
+  const [more,setMore]=useState(!!(initial&&(initial.desc||initial.repeat)));
   const set=k=>e=>setT({...t,[k]:e.target.value});
-  const submit=e=>{e.preventDefault();if(!t.title.trim())return;onSave({...t,title:t.title.trim(),desc:t.desc.trim(),repeat:t.repeat||undefined})};
-  return html`<form className="card" onSubmit=${submit}>
+  const submit=e=>{e.preventDefault();if(!t.title.trim())return;onSave({...t,title:t.title.trim(),desc:(t.desc||'').trim(),repeat:t.repeat||undefined})};
+  return html`<form className="card" onSubmit=${submit} style=${{marginBottom:22}}>
     <label>Task<input autoFocus value=${t.title} onInput=${set('title')} maxLength="80" placeholder="What needs doing?" required/></label>
-    <label>Description<textarea value=${t.desc} onInput=${set('desc')} maxLength="160" placeholder="A short note (optional)"></textarea></label>
-    <div className="two"><label>Difficulty<select value=${t.difficulty} onChange=${set('difficulty')}>
+    <label>Difficulty<select value=${t.difficulty} onChange=${set('difficulty')}>
       ${Object.keys(XP).map(k=>html`<option key=${k} value=${k}>${LABEL[k]} (${XP[k]} XP)</option>`)}</select></label>
-      <label>Repeat<select value=${t.repeat||''} onChange=${set('repeat')}><option value="">Does not repeat</option><option value="daily">Every day</option><option value="weekly">Every week</option></select></label></div>
+    ${more?html`<label>Description<textarea value=${t.desc||''} onInput=${set('desc')} maxLength="160" placeholder="A short note (optional)"></textarea></label>
+      <label>Repeat<select value=${t.repeat||''} onChange=${set('repeat')}><option value="">Does not repeat</option><option value="daily">Every day</option><option value="weekly">Every week</option></select></label>`
+      :html`<div><button type="button" className="link" onClick=${()=>setMore(true)}>More options (description, repeat)</button></div>`}
     <div className="row"><${Btn} type="submit" kind="purple">${initial?'Save task':'Add task'}<//><${Btn} kind="plain" onClick=${onCancel}>Cancel<//></div>
   </form>`;
 }
 function TaskCard({task,onDone,onEdit,onDelete}){
   const [ask,setAsk]=useState(false);
   useEffect(()=>{if(!ask)return;const h=e=>{if(e.key==='Escape')setAsk(false)};addEventListener('keydown',h);return()=>removeEventListener('keydown',h)},[ask]);
+  const items=[...(task.done?[]:[{label:'Edit',run:onEdit}]),{label:'Delete',danger:true,run:()=>setAsk(true)}];
   return html`<${Fragment}><article className=${'card task '+task.difficulty+(task.done?' done':'')}>
     <div>
       <h3>${task.title}</h3>
       ${task.desc&&html`<p>${task.desc}</p>`}
-      <div className="meta"><span className=${'tag '+task.difficulty}>${LABEL[task.difficulty]}</span><span className="tag xp">${XP[task.difficulty]} XP</span>${task.repeat&&html`<span className="tag rep">${task.repeat==='daily'?'Daily':'Weekly'}</span>`}</div>
+      <div className="meta"><span className=${'tag '+task.difficulty}>${LABEL[task.difficulty]} · ${XP[task.difficulty]} XP</span>${task.repeat&&html`<span className="tag rep">${task.repeat==='daily'?'Daily':'Weekly'}</span>`}</div>
     </div>
-    <div className="side">
+    <div className="side"><div className="row">
       ${task.done?html`<span className="tag easy">Completed</span>`:html`<${Btn} kind="mint" onClick=${onDone}>Complete<//>`}
-      <div className="row">
-        ${!task.done&&html`<button className="link" onClick=${onEdit}>Edit</button>`}
-        <button className="link danger" onClick=${()=>setAsk(true)}>Delete</button>
-      </div>
-    </div>
+      <${MoreMenu} items=${items}/>
+    </div></div>
   </article>
   ${ask&&html`<div className="modal-bg" onClick=${()=>setAsk(false)}><div className="card modal" role="alertdialog" aria-modal="true" aria-label="Delete task" onClick=${e=>e.stopPropagation()}>
     <h3 className="danger">Delete this task?</h3>
@@ -197,21 +260,33 @@ function TaskCard({task,onDone,onEdit,onDelete}){
     <div className="row"><${Btn} kind="red" onClick=${onDelete}>Delete task<//><${Btn} kind="plain" autoFocus onClick=${()=>setAsk(false)}>Cancel<//></div></div></div>`}
   <//>`;
 }
-function TasksPage({S,api,balance}){
+function TasksPage({S,api,balance,streak}){
   const [view,setView]=useState('pending');
   const [form,setForm]=useState(null); // null | 'new' | id
+  const [sort,setSort]=useState('new');
+  const [fd,setFd]=useState('all');
+  const [quick,setQuick]=useState('');
+  const [qd,setQd]=useState('easy');
   const pending=S.tasks.filter(t=>!t.done),done=S.tasks.filter(t=>t.done);
-  const shown=view==='pending'?pending:done;
+  const rank={easy:0,medium:1,hard:2,xhard:3};
+  const shown=(view==='pending'?pending:done).filter(t=>fd==='all'||t.difficulty===fd).slice().sort((a,b)=>sort==='hard'?rank[b.difficulty]-rank[a.difficulty]:sort==='easy'?rank[a.difficulty]-rank[b.difficulty]:0);
   const editing=form&&form!=='new'?S.tasks.find(t=>t.id===form):null;
+  const empty=S.tasks.length===0,many=S.tasks.length>6;
+  const addQuick=e=>{e.preventDefault();const v=quick.trim();if(!v)return;api.addTask({title:v,desc:'',difficulty:qd});setQuick('');setView('pending')};
   return html`<section>
-    <div className="head"><div className="titlerow"><h1>Tasks</h1><span className="xpbadge">${balance} XP</span></div>
-      ${!form&&html`<${Btn} kind="purple" onClick=${()=>setForm('new')}>+ Add task<//>`}</div>
-    ${form&&html`<${TaskForm} key=${form} initial=${editing} onCancel=${()=>setForm(null)} onSave=${t=>{editing?api.editTask(editing.id,t):api.addTask(t);setForm(null)}}/>`}
-    <div className="row" style=${{marginBottom:18}} role="tablist">
+    <div className="head"><div className="titlerow"><h1>Tasks</h1><span className="xpbadge">${balance} XP</span>${streak>=3&&html`<span className="streak">${streak}-day streak</span>`}</div></div>
+    ${form?html`<${TaskForm} key=${form} initial=${editing} draft=${{title:quick,desc:'',difficulty:qd,repeat:''}} onCancel=${()=>setForm(null)} onSave=${t=>{if(editing)api.editTask(editing.id,t);else{api.addTask(t);setQuick('')}setForm(null);setView('pending')}}/>`
+      :html`<form className="quick" onSubmit=${addQuick}><div className="qbox"><input aria-label="Quick add task" value=${quick} onInput=${e=>setQuick(e.target.value)} maxLength="80" placeholder="Add a task and press Enter"/><${DiffPicker} value=${qd} onChange=${setQd}/></div><${Btn} type="submit" kind="purple">Add<//><${Btn} kind="plain" onClick=${()=>setForm('new')}>Details<//></form>`}
+    ${!empty&&html`<div className="row" style=${{marginBottom:18}}>
       ${[['pending','Pending',pending.length],['done','Completed',done.length]].map(([k,l,n])=>html`<${Btn} key=${k} sm kind=${view===k?'purple':'plain'} aria-pressed=${view===k} onClick=${()=>setView(k)}>${l} (${n})<//>`)}
-    </div>
+      ${many&&html`<div className="row" style=${{marginLeft:'auto'}}>
+        <select className="mini" aria-label="Filter by difficulty" value=${fd} onChange=${e=>setFd(e.target.value)}><option value="all">All difficulties</option>${Object.keys(XP).map(k=>html`<option key=${k} value=${k}>${LABEL[k]}</option>`)}</select>
+        <select className="mini" aria-label="Sort tasks" value=${sort} onChange=${e=>setSort(e.target.value)}><option value="new">Newest first</option><option value="hard">Hardest first</option><option value="easy">Easiest first</option></select>
+      </div>`}
+    </div>`}
     <div className="list">
-      ${shown.length===0&&html`<div className="empty">${view==='pending'?'Nothing pending. Add a task to start earning XP.':'No completed tasks yet.'}</div>`}
+      ${empty&&!form&&html`<div className="empty"><p style=${{margin:'0 0 14px'}}>No tasks yet.</p><${Btn} kind="purple" onClick=${()=>setForm('new')}>Add your first task<//></div>`}
+      ${!empty&&shown.length===0&&html`<div className="empty">${fd!=='all'?'No tasks match this filter.':view==='pending'?'Nothing pending.':'No completed tasks yet.'}</div>`}
       ${shown.map(t=>html`<${TaskCard} key=${t.id} task=${t} onDone=${()=>api.complete(t.id)} onEdit=${()=>setForm(t.id)} onDelete=${()=>api.delTask(t.id)}/>`)}
     </div>
   </section>`;
@@ -231,16 +306,19 @@ function RewardForm({initial,onSave,onCancel}){
 }
 function RewardCard({reward,balance,onRedeem,onEdit,onDelete}){
   const [ask,setAsk]=useState(false);
-  const can=balance>=reward.cost;
   const [del,setDel]=useState(false);
+  const can=balance>=reward.cost;
+  const pct=Math.min(100,Math.round(balance/reward.cost*100));
   useEffect(()=>{if(!del)return;const h=e=>{if(e.key==='Escape')setDel(false)};addEventListener('keydown',h);return()=>removeEventListener('keydown',h)},[del]);
-  return html`<${Fragment}><article className="card reward">
+  return html`<${Fragment}><article className=${'card reward'+(can?' ready':'')}>
     <div><h3>${reward.name}</h3>
-      <div className="meta cost"><span className="tag xp">${reward.cost} XP</span>
-        <button className="link" onClick=${onEdit}>Edit</button><button className="link danger" onClick=${()=>setDel(true)}>Delete</button></div></div>
-    ${ask?html`<div className="row"><span style=${{fontWeight:800}}>Spend ${reward.cost} XP?</span>
-        <${Btn} sm kind="mint" onClick=${()=>{onRedeem();setAsk(false)}}>Yes, redeem<//><${Btn} sm kind="plain" onClick=${()=>setAsk(false)}>Cancel<//></div>`
-      :html`<${Btn} kind="mint" disabled=${!can} title=${can?'':'Need '+(reward.cost-balance)+' more XP'} onClick=${()=>setAsk(true)}>Redeem<//>`}
+      <div className="meta cost"><span className="tag xp">${reward.cost} XP</span></div>
+      ${!can&&html`<div className="lock"><div className="bar sm"><b style=${{width:pct+'%'}}></b></div><div className="togo">${reward.cost-balance} XP to go</div></div>`}</div>
+    <div className="row">
+      ${ask?html`<span style=${{fontWeight:800}}>Spend ${reward.cost} XP?</span><${Btn} sm kind="mint" onClick=${()=>{onRedeem();setAsk(false)}}>Yes, redeem<//><${Btn} sm kind="plain" onClick=${()=>setAsk(false)}>Cancel<//>`
+        :html`<${Btn} kind="mint" disabled=${!can} title=${can?'':'Need '+(reward.cost-balance)+' more XP'} onClick=${()=>setAsk(true)}>Redeem<//>`}
+      <${MoreMenu} items=${[{label:'Edit',run:onEdit},{label:'Delete',danger:true,run:()=>setDel(true)}]}/>
+    </div>
   </article>
   ${del&&html`<div className="modal-bg" onClick=${()=>setDel(false)}><div className="card modal" role="alertdialog" aria-modal="true" aria-label="Delete reward" onClick=${e=>e.stopPropagation()}>
     <h3 className="danger">Delete this reward?</h3>
@@ -251,12 +329,13 @@ function RewardCard({reward,balance,onRedeem,onEdit,onDelete}){
 function RewardsPage({S,balance,api}){
   const [form,setForm]=useState(null);
   const editing=form&&form!=='new'?S.rewards.find(r=>r.id===form):null;
+  const none=S.rewards.length===0;
   return html`<section>
     <div className="head"><div className="titlerow"><h1>Rewards</h1><span className="xpbadge">${balance} XP</span></div>
-      ${!form&&html`<${Btn} kind="purple" onClick=${()=>setForm('new')}>+ Add reward<//>`}</div>
+      ${!form&&!none&&html`<${Btn} kind="purple" onClick=${()=>setForm('new')}>+ Add reward<//>`}</div>
     ${form&&html`<div style=${{marginBottom:22}}><${RewardForm} key=${form} initial=${editing} onCancel=${()=>setForm(null)} onSave=${r=>{editing?api.editReward(editing.id,r):api.addReward(r);setForm(null)}}/></div>`}
     <div className="list">
-      ${S.rewards.length===0&&html`<div className="empty">No rewards yet. Add something worth working for.</div>`}
+      ${none&&!form&&html`<div className="empty"><p style=${{margin:'0 0 14px'}}>No rewards yet. Add something worth working for.</p><${Btn} kind="purple" onClick=${()=>setForm('new')}>Add your first reward<//></div>`}
       ${S.rewards.map(r=>html`<${RewardCard} key=${r.id} reward=${r} balance=${balance} onRedeem=${()=>api.redeem(r.id)} onEdit=${()=>setForm(r.id)} onDelete=${()=>api.delReward(r.id)}/>`)}
     </div>
   </section>`;
@@ -280,50 +359,35 @@ function ProfileStats({S,info,streak}){
     <div className="stat" style=${{borderBottom:0}}><span>Current streak</span><strong>${streak} ${streak===1?'day':'days'}</strong></div>
   </div>`;
 }
-function ActivityHeatmap({activity,today}){
-  const {cells,weeks,months,total}=useMemo(()=>{
-    const start=new Date(today);start.setMonth(start.getMonth()-1);start.setDate(start.getDate()-start.getDay());
-    const cells=[];let total=0;
-    for(const d=new Date(start);d<=today;d.setDate(d.getDate()+1)){
-      const k=dkey(d),n=activity[k]||0;total+=n;cells.push({k,n,date:new Date(d)});
-    }
-    const weeks=Math.ceil(cells.length/7),months=[];
-    for(let w=0;w<weeks;w++){
-      const hit=cells.slice(w*7,w*7+7).find(c=>c.date.getDate()===1);
-      if(hit||w===0){if(months.length&&w-months[months.length-1].w<2)months.pop();months.push({w,label:(hit||cells[0]).date.toLocaleString('en',{month:'short'})});}
-    }
-    return{cells,weeks,months,total};
-  },[activity,today.getTime()]);
-  const lvl=n=>n>=4?3:n>=2?2:n>=1?1:0;
-  return html`<div className="card">
-    <div className="heat"><div className="hm" style=${{'--w':weeks}} role="img" aria-label=${total+' tasks completed in the past month'}>
-      ${months.map(m=>html`<span key=${'m'+m.w} className="mo" style=${{gridColumn:m.w+2}}>${m.label}</span>`)}
-      ${[1,3,5].map(d=>html`<span key=${'d'+d} className="wd" style=${{gridRow:d+2}}>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]}</span>`)}
-        ${cells.map((c,i)=>html`<div key=${c.k} className=${'cell l'+lvl(c.n)+(c.k===dkey(today)?' today':'')} style=${{gridColumn:Math.floor(i/7)+2,gridRow:(i%7)+2}} title=${c.date.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+': '+c.n+(c.n===1?' task':' tasks')}></div>`)}
-      </div></div>
-    <div className="legend"><span>${total} tasks completed in the past month</span>
-      <span className="row" style=${{gap:4}}>Less ${[0,1,2,3].map(l=>html`<div key=${l} className=${'cell l'+l}></div>`)} More</span></div>
-  </div>`;
-}
-function ProfilePage({S,info,streak,today}){
+function ProfilePage({S,info,streak}){
+  const [hist,setHist]=useState(false);
+  const n=S.redeemed.length;
   return html`<section>
     <div className="head"><div><h1>Profile</h1></div></div>
     <div className="profile"><${ProfileStats} S=${S} info=${info} streak=${streak}/></div>
-    ${S.redeemed.length>0&&html`<div className="card hist"><strong>Redeemed rewards</strong><ul>
+    ${n>0&&html`<div style=${{marginTop:18}}><button type="button" className="link" onClick=${()=>setHist(h=>!h)}>${hist?'Hide history':'View history ('+n+')'}</button></div>`}
+    ${hist&&n>0&&html`<div className="card hist" style=${{marginTop:12}}><strong>Redeemed rewards</strong><ul>
       ${S.redeemed.slice().reverse().slice(0,8).map(r=>html`<li key=${r.id}><span>${r.name}</span><span>−${r.cost} XP · ${new Date(r.at).toLocaleDateString('en',{month:'short',day:'numeric'})}</span></li>`)}</ul></div>`}
   </section>`;
 }
 
+function FlashXP({xp}){ // counts up to the reward, GTA-style
+  const [n,setN]=useState(0);
+  useEffect(()=>{let raf,t0;const step=t=>{t0=t0??t;const p=Math.min(1,(t-t0)/1100);setN(Math.round(xp*(1-Math.pow(1-p,3))));if(p<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf)},[xp]);
+  return html`<div className="flash-xp" data-t=${'+'+xp+' XP'}>+${n} XP</div>`;
+}
 /* ---------- App ---------- */
 function App(){
   const [S,setS]=useState(()=>{const s=load();s.completedCount=s.completedCount??s.tasks.filter(t=>t.done).length;return s});
   const [page,setPage]=useState(()=>['tasks','rewards','profile'].includes(location.hash.slice(1))?location.hash.slice(1):'tasks');
   const [today,setToday]=useState(startOfToday);
   const [undo,setUndo]=useState(null);
+  const [flash,setFlash]=useState(null);
+  useEffect(()=>{if(!flash)return;const t=setTimeout(()=>setFlash(null),3700);return()=>clearTimeout(t)},[flash]);
   useEffect(()=>{ // reset recurring tasks whose day/week has passed
     setS(s=>{let ch=false;const tasks=s.tasks.map(t=>{if(t.repeat&&t.done&&t.doneKey!==periodKey(t.repeat,today)){ch=true;return{...t,done:false}}return t});return ch?{...s,tasks}:s});
   },[today]);
-  useEffect(()=>{if(!undo)return;const t=setTimeout(()=>setUndo(null),10000);return()=>clearTimeout(t)},[undo]);
+  useEffect(()=>{if(!undo)return;const t=setTimeout(()=>setUndo(null),14000);return()=>clearTimeout(t)},[undo]);
   useEffect(()=>{
     const h=()=>{const p=location.hash.slice(1);setPage(['rewards','profile'].includes(p)?p:'tasks');window.scrollTo(0,0)};
     addEventListener('hashchange',h);
@@ -338,7 +402,7 @@ function App(){
     editTask:(id,t)=>up(s=>({...s,tasks:s.tasks.map(x=>x.id===id&&!x.done?{...x,title:t.title,desc:t.desc,difficulty:t.difficulty,repeat:t.repeat}:x)})),
     delTask:id=>up(s=>({...s,tasks:s.tasks.filter(x=>x.id!==id)})), // earned XP and activity are kept
     complete:id=>{
-      const c=S.tasks.find(x=>x.id===id);if(c&&!c.done)setUndo({id,xp:XP[c.difficulty],k:dkey(new Date()),title:c.title});
+      const c=S.tasks.find(x=>x.id===id);if(c&&!c.done){const gain=XP[c.difficulty],nl=levelInfo(S.earned+gain).level;setUndo({id,xp:gain,k:dkey(new Date()),title:c.title});setFlash({n:Date.now(),xp:gain,lvl:nl>info.level?nl:0})}
       up(s=>{
       const t=s.tasks.find(x=>x.id===id);if(!t||t.done)return s; // award once only
       const xp=XP[t.difficulty],k=dkey(new Date());
@@ -363,10 +427,11 @@ function App(){
       return{...s,spent:s.spent+r.cost,redeemed:[...s.redeemed,{id:uid(),name:r.name,cost:r.cost,at:Date.now()}]};
     })
   };
-  const showUndo=undo&&balance>=undo.xp&&S.tasks.some(x=>x.id===undo.id&&x.done);
+  const showUndo=undo&&!flash&&balance>=undo.xp&&S.tasks.some(x=>x.id===undo.id&&x.done);
   return html`<div className="wrap">
     <${Navbar} page=${page} balance=${balance} level=${info.level}/>
-    ${page==='tasks'?html`<${TasksPage} S=${S} api=${api} balance=${balance}/>`:page==='rewards'?html`<${RewardsPage} S=${S} balance=${balance} api=${api}/>`:html`<${ProfilePage} S=${S} info=${info} streak=${streak} today=${today}/>`}
+    ${page==='tasks'?html`<${TasksPage} S=${S} api=${api} balance=${balance} streak=${streak}/>`:page==='rewards'?html`<${RewardsPage} S=${S} balance=${balance} api=${api}/>`:html`<${ProfilePage} S=${S} info=${info} streak=${streak} today=${today}/>`}
+    ${flash&&html`<div className=${'flash'+(flash.lvl?' lv':'')} key=${flash.n} aria-live="polite"><${FlashXP} xp=${flash.xp}/></div>`}
     ${showUndo&&html`<div className="toast" role="status"><span><strong>+${undo.xp} XP</strong> earned · ${undo.title}</span><${Btn} sm kind="plain" onClick=${api.undoDone}>Undo<//></div>`}
   </div>`;
 }
