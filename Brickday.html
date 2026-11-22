@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brickday – tasks, XP, rewards</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='10' width='50' height='50' rx='9' fill='%231F2340'/%3E%3Crect x='4' y='4' width='50' height='50' rx='9' fill='%23F7D257' stroke='%231F2340' stroke-width='5'/%3E%3Cg fill='%23FFF0A8' stroke='%231F2340' stroke-width='3'%3E%3Ccircle cx='19' cy='19' r='5.5'/%3E%3Ccircle cx='39' cy='19' r='5.5'/%3E%3Ccircle cx='19' cy='39' r='5.5'/%3E%3Ccircle cx='39' cy='39' r='5.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF8FF;--surface:#FFFFFF;--ink:#1F2340;--muted:#5C6085;
+  --purple:#A8A4FF;--purple-d:#7F7BF0;--yellow:#F7D257;--mint:#6FE8B4;--coral:#FF8F7A;
+  --easy-t:#C6F3DC;--med-t:#F9E6A6;--hard-t:#FFCDBF;
+  --g0:#E4E2EE;--g1:#C3EBC2;--g2:#5DBB63;--g3:#24823A;
+  --dots:#DDD8F5;--page:#D3EAFF;--stud-a:#B6D6F7;--stud-b:#EAF5FF;color-scheme:light;
+  --sh:4px 4px 0 var(--ink);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--page);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='22' viewBox='0 0 44 22'%3E%3Cpath d='M0 11 Q11 1 22 11 T44 11' fill='none' stroke='%23B6D6F7' stroke-width='2.5'/%3E%3C/svg%3E");background-size:44px 22px;color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;
+  min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:20px 20px 80px}
+/* nav */
+.nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:36px}
+.brand{font-weight:800;font-size:22px;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;margin-right:auto}
+.brand i{display:inline-block;width:22px;height:22px;background:var(--yellow);border:2.5px solid var(--ink);border-radius:5px 5px 5px 1px;box-shadow:2px 2px 0 var(--ink)}
+.tabs{display:flex;gap:8px}
+/* buttons */
+.btn{font:inherit;font-weight:800;color:#1F2340;background:var(--yellow);border:2.5px solid var(--ink);border-radius:8px 8px 8px 2px;padding:8px 16px;box-shadow:var(--sh);cursor:pointer;transition:transform .08s,box-shadow .08s,filter .08s;text-decoration:none;display:inline-block}
+.btn:hover{filter:brightness(1.05);transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+.btn:focus-visible,.link:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--purple-d);outline-offset:2px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:var(--sh);filter:none}
+.btn.purple{background:var(--purple)}.btn.mint{background:var(--mint)}.btn.coral{background:var(--coral)}.btn.red{background:#E5484D;color:#fff}.btn.plain{background:var(--surface);color:var(--ink)}
+.btn.sm{padding:5px 12px;font-size:14px;box-shadow:3px 3px 0 var(--ink)}
+.tab[aria-current=page]{background:var(--purple);transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.tab:not([aria-current=page]){background:var(--surface);color:var(--ink)}
+.chip{font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);border-radius:6px 6px 6px 1px;padding:3px 10px}
+.link{font:inherit;font-size:14px;font-weight:600;color:var(--muted);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.link:hover{color:var(--ink)}
+/* type */
+h1{font-size:clamp(34px,6vw,46px);line-height:1.05;letter-spacing:-.03em;font-weight:800;margin:0 0 6px}
+.lede{color:var(--muted);margin:0 0 24px;max-width:56ch}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.titlerow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.titlerow h1{margin:0}
+.xpbadge{font-weight:800;font-size:26px;line-height:1;color:#1F2340;background:var(--purple);border:2.5px solid var(--ink);border-radius:8px 8px 8px 2px;box-shadow:3px 3px 0 var(--ink);padding:9px 15px}
+/* cards */
+.card{background:var(--surface);border:2.5px solid var(--ink);border-radius:10px 10px 10px 2px;box-shadow:var(--sh);padding:18px}
+.list{display:grid;gap:18px}
+.task{display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:start}
+.task.easy{background:var(--easy-t)}.task.medium{background:var(--med-t)}.task.hard{background:var(--hard-t)}
+.task.done{opacity:.75}.task.done h3{text-decoration:line-through;text-decoration-thickness:2px}
+.task h3,.reward h3{margin:0;font-size:22px;line-height:1.2;font-weight:800;letter-spacing:-.01em;overflow-wrap:anywhere}
+.task p{margin:4px 0 0;color:var(--muted);overflow-wrap:anywhere}
+.meta{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.tag{font-weight:800;font-size:13px;border:2px solid var(--ink);border-radius:5px 5px 5px 1px;padding:1px 8px;color:#1F2340}
+.tag.easy{background:var(--mint)}.tag.medium{background:var(--yellow)}.tag.hard{background:var(--coral)}.tag.xp{background:var(--purple)}.tag.rep{background:var(--surface)}
+.side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.reward{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.reward .cost{margin-top:6px}
+/* form */
+form.card{display:grid;gap:12px;margin-bottom:22px;background:var(--surface)}
+label{font-weight:800;font-size:14px;display:grid;gap:4px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:2.5px solid var(--ink);border-radius:6px 6px 6px 1px;padding:8px 10px;box-shadow:inset 2px 2px 0 rgba(31,35,64,.12);width:100%}
+textarea{resize:vertical;min-height:64px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.empty{border:2.5px dashed var(--ink);border-radius:10px;padding:28px;text-align:center;color:var(--muted)}
+/* progress */
+.bar{height:20px;border:2.5px solid var(--ink);border-radius:6px 6px 6px 1px;background:var(--bg);overflow:hidden}
+.bar b{display:block;height:100%;background:var(--purple);border-right:2.5px solid var(--ink);transition:width .3s}
+.bar b[style*="width:0%"]{border-right:0}
+/* profile */
+.profile{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align-items:start}
+.stat{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px dashed var(--g0);padding:8px 0}
+.stat span{color:var(--muted);font-weight:600}.stat strong{font-size:22px;font-weight:800}
+.level{font-size:56px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.heat{overflow-x:auto;padding-bottom:4px}
+
+.hm{display:grid;grid-template-columns:30px repeat(var(--w),38px);gap:4px;width:max-content}
+.hm .mo{grid-row:1;font-size:13px;font-weight:800;line-height:18px;white-space:nowrap}
+.hm .wd{grid-column:1;align-self:center;font-size:12px;font-weight:600;color:var(--muted)}
+.hm .cell{width:100%;aspect-ratio:1/1;align-self:start}
+.cell{border-radius:6px 6px 6px 2px;background:var(--g0)}
+.cell.today{box-shadow:0 0 0 2.5px var(--ink)}
+.cell.l1{background:var(--g1)}.cell.l2{background:var(--g2)}.cell.l3{background:var(--g3)}
+.legend{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:12px;border-top:2px dashed var(--g0);font-size:13px;color:var(--muted)}
+.legend .cell{width:16px;height:16px;border-radius:4px}
+.hist{margin-top:22px}.hist ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.hist li{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:14px}
+@media (max-width:820px){.profile{grid-template-columns:1fr}.two{grid-template-columns:1fr}.task{grid-template-columns:1fr}.side{flex-direction:row;align-items:center;justify-content:space-between}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:14px;background:var(--surface);border:2.5px solid var(--ink);border-radius:8px 8px 8px 2px;box-shadow:var(--sh);padding:10px 14px;max-width:calc(100% - 32px);font-weight:600}
+.toast span{min-width:0;overflow-wrap:anywhere}
+.modal-bg{position:fixed;inset:0;z-index:30;background:rgba(31,35,64,.5);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{max-width:380px;width:100%;display:grid;gap:12px;border-top:10px solid #E5484D}
+.modal h3.danger{color:#D12F36}
+.link.danger{color:#D12F36}
+.modal h3{margin:0;font-size:22px}
+.modal p{margin:0;color:var(--muted);overflow-wrap:anywhere}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+const {useState,useEffect,useMemo,Fragment}=React;
+const html=htm.bind(React.createElement);
+
+/* ---------- logic ---------- */
+const KEY='brickday:v1';
+const XP={easy:10,medium:15,hard:20};
+const LABEL={easy:'Easy',medium:'Medium',hard:'Hard'};
+const pad=n=>String(n).padStart(2,'0');
+const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const startOfToday=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+// A recurring task is "done" for one period (a day, or a week starting Sunday), then resets.
+const periodKey=(r,d)=>{const x=new Date(d);if(r==='weekly')x.setDate(x.getDate()-x.getDay());return dkey(x)};
+const seed=()=>({
+  tasks:[
+    {id:uid(),title:'Reply to pending emails',desc:'Clear the inbox backlog',difficulty:'easy',done:false},
+    {id:uid(),title:'Write the project outline',desc:'One page, three sections',difficulty:'medium',done:false},
+    {id:uid(),title:'Finish the report draft',desc:'Include charts and a summary',difficulty:'hard',done:false}],
+  rewards:[{id:uid(),name:'Watch a movie',cost:100},{id:uid(),name:'Buy something nice',cost:300}],
+  redeemed:[],activity:{},earned:0,spent:0});
+function load(){
+  try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.tasks)return r}catch(e){}
+  return seed();
+}
+// Level n starts at 25*n*(n-1) lifetime XP: 0, 50, 150, 300, 500...
+const levelStart=L=>25*L*(L-1);
+function levelInfo(xp){
+  let L=1;while(xp>=levelStart(L+1))L++;
+  const a=levelStart(L),b=levelStart(L+1);
+  return{level:L,into:xp-a,span:b-a,pct:Math.round((xp-a)/(b-a)*100)};
+}
+function streakOf(activity){
+  const d=startOfToday();
+  if(!activity[dkey(d)])d.setDate(d.getDate()-1); // today not done yet keeps streak alive
+  let n=0;while(activity[dkey(d)]>0){n++;d.setDate(d.getDate()-1)}
+  return n;
+}
+
+/* ---------- UI primitives ---------- */
+const Btn=({kind='',sm,...p})=>html`<button type=${p.type||'button'} className=${'btn '+kind+(sm?' sm':'')} ...${p}/>`;
+
+function Navbar({page,balance,level}){
+  const items=[['tasks','Tasks'],['rewards','Rewards'],['profile','Profile']];
+  return html`<nav className="nav" aria-label="Main">
+    <div className="brand"><i></i>Brickday</div>
+    <div className="tabs">${items.map(([k,l])=>html`<a key=${k} href=${'#'+k} className="btn sm tab" aria-current=${page===k?'page':undefined}>${l}</a>`)}</div>
+  </nav>`;
+}
+
+/* ---------- Tasks ---------- */
+function TaskForm({initial,onSave,onCancel}){
+  const [t,setT]=useState(initial||{title:'',desc:'',difficulty:'easy',repeat:''});
+  const set=k=>e=>setT({...t,[k]:e.target.value});
+  const submit=e=>{e.preventDefault();if(!t.title.trim())return;onSave({...t,title:t.title.trim(),desc:t.desc.trim(),repeat:t.repeat||undefined})};
+  return html`<form className="card" onSubmit=${submit}>
+    <label>Task<input autoFocus value=${t.title} onInput=${set('title')} maxLength="80" placeholder="What needs doing?" required/></label>
+    <label>Description<textarea value=${t.desc} onInput=${set('desc')} maxLength="160" placeholder="A short note (optional)"></textarea></label>
+    <div className="two"><label>Difficulty<select value=${t.difficulty} onChange=${set('difficulty')}>
+      ${Object.keys(XP).map(k=>html`<option key=${k} value=${k}>${LABEL[k]} (${XP[k]} XP)</option>`)}</select></label>
+      <label>Repeat<select value=${t.repeat||''} onChange=${set('repeat')}><option value="">Does not repeat</option><option value="daily">Every day</option><option value="weekly">Every week</option></select></label></div>
+    <div className="row"><${Btn} type="submit" kind="purple">${initial?'Save task':'Add task'}<//><${Btn} kind="plain" onClick=${onCancel}>Cancel<//></div>
+  </form>`;
+}
+function TaskCard({task,onDone,onEdit,onDelete}){
+  const [ask,setAsk]=useState(false);
+  useEffect(()=>{if(!ask)return;const h=e=>{if(e.key==='Escape')setAsk(false)};addEventListener('keydown',h);return()=>removeEventListener('keydown',h)},[ask]);
+  return html`<${Fragment}><article className=${'card task '+task.difficulty+(task.done?' done':'')}>
+    <div>
+      <h3>${task.title}</h3>
+      ${task.desc&&html`<p>${task.desc}</p>`}
+      <div className="meta"><span className=${'tag '+task.difficulty}>${LABEL[task.difficulty]}</span><span className="tag xp">${XP[task.difficulty]} XP</span>${task.repeat&&html`<span className="tag rep">${task.repeat==='daily'?'Daily':'Weekly'}</span>`}</div>
+    </div>
+    <div className="side">
+      ${task.done?html`<span className="tag easy">Completed</span>`:html`<${Btn} kind="mint" onClick=${onDone}>Complete<//>`}
+      <div className="row">
+        ${!task.done&&html`<button className="link" onClick=${onEdit}>Edit</button>`}
+        <button className="link danger" onClick=${()=>setAsk(true)}>Delete</button>
+      </div>
+    </div>
+  </article>
+  ${ask&&html`<div className="modal-bg" onClick=${()=>setAsk(false)}><div className="card modal" role="alertdialog" aria-modal="true" aria-label="Delete task" onClick=${e=>e.stopPropagation()}>
+    <h3 className="danger">Delete this task?</h3>
+    <p>“${task.title}” will be removed.${task.done?' The XP you earned from it is kept.':''}</p>
+    <div className="row"><${Btn} kind="red" onClick=${onDelete}>Delete task<//><${Btn} kind="plain" autoFocus onClick=${()=>setAsk(false)}>Cancel<//></div></div></div>`}
+  <//>`;
+}
+function TasksPage({S,api,balance}){
+  const [view,setView]=useState('pending');
+  const [form,setForm]=useState(null); // null | 'new' | id
+  const pending=S.tasks.filter(t=>!t.done),done=S.tasks.filter(t=>t.done);
+  const shown=view==='pending'?pending:done;
+  const editing=form&&form!=='new'?S.tasks.find(t=>t.id===form):null;
+  return html`<section>
+    <div className="head"><div className="titlerow"><h1>Tasks</h1><span className="xpbadge">${balance} XP</span></div>
+      ${!form&&html`<${Btn} kind="purple" onClick=${()=>setForm('new')}>+ Add task<//>`}</div>
+    ${form&&html`<${TaskForm} key=${form} initial=${editing} onCancel=${()=>setForm(null)} onSave=${t=>{editing?api.editTask(editing.id,t):api.addTask(t);setForm(null)}}/>`}
+    <div className="row" style=${{marginBottom:18}} role="tablist">
+      ${[['pending','Pending',pending.length],['done','Completed',done.length]].map(([k,l,n])=>html`<${Btn} key=${k} sm kind=${view===k?'purple':'plain'} aria-pressed=${view===k} onClick=${()=>setView(k)}>${l} (${n})<//>`)}
+    </div>
+    <div className="list">
+      ${shown.length===0&&html`<div className="empty">${view==='pending'?'Nothing pending. Add a task to start earning XP.':'No completed tasks yet.'}</div>`}
+      ${shown.map(t=>html`<${TaskCard} key=${t.id} task=${t} onDone=${()=>api.complete(t.id)} onEdit=${()=>setForm(t.id)} onDelete=${()=>api.delTask(t.id)}/>`)}
+    </div>
+  </section>`;
+}
+
+/* ---------- Rewards ---------- */
+function RewardForm({initial,onSave,onCancel}){
+  const [r,setR]=useState(initial||{name:'',cost:''});
+  const submit=e=>{e.preventDefault();const c=parseInt(r.cost,10);if(!r.name.trim()||!(c>0))return;onSave({name:r.name.trim(),cost:c})};
+  return html`<form className="card" onSubmit=${submit}>
+    <div className="two">
+      <label>Reward<input autoFocus value=${r.name} maxLength="60" placeholder="e.g. Take a day off" onInput=${e=>setR({...r,name:e.target.value})} required/></label>
+      <label>XP cost<input type="number" min="1" step="1" value=${r.cost} placeholder="100" onInput=${e=>setR({...r,cost:e.target.value})} required/></label>
+    </div>
+    <div className="row"><${Btn} type="submit" kind="purple">${initial?'Save reward':'Add reward'}<//><${Btn} kind="plain" onClick=${onCancel}>Cancel<//></div>
+  </form>`;
+}
+function RewardCard({reward,balance,onRedeem,onEdit,onDelete}){
+  const [ask,setAsk]=useState(false);
+  const can=balance>=reward.cost;
+  const [del,setDel]=useState(false);
+  useEffect(()=>{if(!del)return;const h=e=>{if(e.key==='Escape')setDel(false)};addEventListener('keydown',h);return()=>removeEventListener('keydown',h)},[del]);
+  return html`<${Fragment}><article className="card reward">
+    <div><h3>${reward.name}</h3>
+      <div className="meta cost"><span className="tag xp">${reward.cost} XP</span>
+        <button className="link" onClick=${onEdit}>Edit</button><button className="link danger" onClick=${()=>setDel(true)}>Delete</button></div></div>
+    ${ask?html`<div className="row"><span style=${{fontWeight:800}}>Spend ${reward.cost} XP?</span>
+        <${Btn} sm kind="mint" onClick=${()=>{onRedeem();setAsk(false)}}>Yes, redeem<//><${Btn} sm kind="plain" onClick=${()=>setAsk(false)}>Cancel<//></div>`
+      :html`<${Btn} kind="mint" disabled=${!can} title=${can?'':'Need '+(reward.cost-balance)+' more XP'} onClick=${()=>setAsk(true)}>Redeem<//>`}
+  </article>
+  ${del&&html`<div className="modal-bg" onClick=${()=>setDel(false)}><div className="card modal" role="alertdialog" aria-modal="true" aria-label="Delete reward" onClick=${e=>e.stopPropagation()}>
+    <h3 className="danger">Delete this reward?</h3>
+    <p>“${reward.name}” will be removed. XP you have already spent on it is not refunded.</p>
+    <div className="row"><${Btn} kind="red" onClick=${onDelete}>Delete reward<//><${Btn} kind="plain" autoFocus onClick=${()=>setDel(false)}>Cancel<//></div></div></div>`}
+  <//>`;
+}
+function RewardsPage({S,balance,api}){
+  const [form,setForm]=useState(null);
+  const editing=form&&form!=='new'?S.rewards.find(r=>r.id===form):null;
+  return html`<section>
+    <div className="head"><div className="titlerow"><h1>Rewards</h1><span className="xpbadge">${balance} XP</span></div>
+      ${!form&&html`<${Btn} kind="purple" onClick=${()=>setForm('new')}>+ Add reward<//>`}</div>
+    ${form&&html`<div style=${{marginBottom:22}}><${RewardForm} key=${form} initial=${editing} onCancel=${()=>setForm(null)} onSave=${r=>{editing?api.editReward(editing.id,r):api.addReward(r);setForm(null)}}/></div>`}
+    <div className="list">
+      ${S.rewards.length===0&&html`<div className="empty">No rewards yet. Add something worth working for.</div>`}
+      ${S.rewards.map(r=>html`<${RewardCard} key=${r.id} reward=${r} balance=${balance} onRedeem=${()=>api.redeem(r.id)} onEdit=${()=>setForm(r.id)} onDelete=${()=>api.delReward(r.id)}/>`)}
+    </div>
+  </section>`;
+}
+
+/* ---------- Profile ---------- */
+function XPProgress({info,earned}){
+  return html`<div>
+    <div className="bar" role="progressbar" aria-valuenow=${info.pct} aria-valuemin="0" aria-valuemax="100"><b style=${{width:info.pct+'%'}}></b></div>
+    <div style=${{fontSize:13,color:'var(--muted)',marginTop:6}}>${info.into} / ${info.span} XP to level ${info.level+1}</div>
+  </div>`;
+}
+function ProfileStats({S,info,streak}){
+  const doneCount=S.tasks.filter(t=>t.done).length;
+  return html`<div className="card">
+    <div style=${{color:'var(--muted)',fontWeight:600}}>Current level</div>
+    <div className="level">${info.level}</div>
+    <div style=${{margin:'14px 0 8px'}}><${XPProgress} info=${info}/></div>
+    <div className="stat"><span>Total XP earned</span><strong>${S.earned}</strong></div>
+    <div className="stat"><span>Tasks completed</span><strong>${S.completedCount}</strong></div>
+    <div className="stat" style=${{borderBottom:0}}><span>Current streak</span><strong>${streak} ${streak===1?'day':'days'}</strong></div>
+  </div>`;
+}
+function ActivityHeatmap({activity,today}){
+  const {cells,weeks,months,total}=useMemo(()=>{
+    const start=new Date(today);start.setMonth(start.getMonth()-1);start.setDate(start.getDate()-start.getDay());
+    const cells=[];let total=0;
+    for(const d=new Date(start);d<=today;d.setDate(d.getDate()+1)){
+      const k=dkey(d),n=activity[k]||0;total+=n;cells.push({k,n,date:new Date(d)});
+    }
+    const weeks=Math.ceil(cells.length/7),months=[];
+    for(let w=0;w<weeks;w++){
+      const hit=cells.slice(w*7,w*7+7).find(c=>c.date.getDate()===1);
+      if(hit||w===0){if(months.length&&w-months[months.length-1].w<2)months.pop();months.push({w,label:(hit||cells[0]).date.toLocaleString('en',{month:'short'})});}
+    }
+    return{cells,weeks,months,total};
+  },[activity,today.getTime()]);
+  const lvl=n=>n>=4?3:n>=2?2:n>=1?1:0;
+  return html`<div className="card">
+    <div className="heat"><div className="hm" style=${{'--w':weeks}} role="img" aria-label=${total+' tasks completed in the past month'}>
+      ${months.map(m=>html`<span key=${'m'+m.w} className="mo" style=${{gridColumn:m.w+2}}>${m.label}</span>`)}
+      ${[1,3,5].map(d=>html`<span key=${'d'+d} className="wd" style=${{gridRow:d+2}}>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]}</span>`)}
+        ${cells.map((c,i)=>html`<div key=${c.k} className=${'cell l'+lvl(c.n)+(c.k===dkey(today)?' today':'')} style=${{gridColumn:Math.floor(i/7)+2,gridRow:(i%7)+2}} title=${c.date.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+': '+c.n+(c.n===1?' task':' tasks')}></div>`)}
+      </div></div>
+    <div className="legend"><span>${total} tasks completed in the past month</span>
+      <span className="row" style=${{gap:4}}>Less ${[0,1,2,3].map(l=>html`<div key=${l} className=${'cell l'+l}></div>`)} More</span></div>
+  </div>`;
+}
+function ProfilePage({S,info,streak,today}){
+  return html`<section>
+    <div className="head"><div><h1>Profile</h1></div></div>
+    <div className="profile"><${ProfileStats} S=${S} info=${info} streak=${streak}/></div>
+    ${S.redeemed.length>0&&html`<div className="card hist"><strong>Redeemed rewards</strong><ul>
+      ${S.redeemed.slice().reverse().slice(0,8).map(r=>html`<li key=${r.id}><span>${r.name}</span><span>−${r.cost} XP · ${new Date(r.at).toLocaleDateString('en',{month:'short',day:'numeric'})}</span></li>`)}</ul></div>`}
+  </section>`;
+}
+
+/* ---------- App ---------- */
+function App(){
+  const [S,setS]=useState(()=>{const s=load();s.completedCount=s.completedCount??s.tasks.filter(t=>t.done).length;return s});
+  const [page,setPage]=useState(()=>['tasks','rewards','profile'].includes(location.hash.slice(1))?location.hash.slice(1):'tasks');
+  const [today,setToday]=useState(startOfToday);
+  const [undo,setUndo]=useState(null);
+  useEffect(()=>{ // reset recurring tasks whose day/week has passed
+    setS(s=>{let ch=false;const tasks=s.tasks.map(t=>{if(t.repeat&&t.done&&t.doneKey!==periodKey(t.repeat,today)){ch=true;return{...t,done:false}}return t});return ch?{...s,tasks}:s});
+  },[today]);
+  useEffect(()=>{if(!undo)return;const t=setTimeout(()=>setUndo(null),10000);return()=>clearTimeout(t)},[undo]);
+  useEffect(()=>{
+    const h=()=>{const p=location.hash.slice(1);setPage(['rewards','profile'].includes(p)?p:'tasks');window.scrollTo(0,0)};
+    addEventListener('hashchange',h);
+    const t=setInterval(()=>{const n=startOfToday();setToday(o=>o.getTime()===n.getTime()?o:n)},60000);
+    return()=>{removeEventListener('hashchange',h);clearInterval(t)};
+  },[]);
+  const info=levelInfo(S.earned),streak=streakOf(S.activity),balance=S.earned-S.spent;
+  useEffect(()=>{try{localStorage.setItem(KEY,JSON.stringify({...S,level:info.level,streak}))}catch(e){}},[S]);
+  const up=f=>setS(s=>f(s));
+  const api={
+    addTask:t=>up(s=>({...s,tasks:[{...t,id:uid(),done:false},...s.tasks]})),
+    editTask:(id,t)=>up(s=>({...s,tasks:s.tasks.map(x=>x.id===id&&!x.done?{...x,title:t.title,desc:t.desc,difficulty:t.difficulty,repeat:t.repeat}:x)})),
+    delTask:id=>up(s=>({...s,tasks:s.tasks.filter(x=>x.id!==id)})), // earned XP and activity are kept
+    complete:id=>{
+      const c=S.tasks.find(x=>x.id===id);if(c&&!c.done)setUndo({id,xp:XP[c.difficulty],k:dkey(new Date()),title:c.title});
+      up(s=>{
+      const t=s.tasks.find(x=>x.id===id);if(!t||t.done)return s; // award once only
+      const xp=XP[t.difficulty],k=dkey(new Date());
+      return{...s,earned:s.earned+xp,completedCount:s.completedCount+1,
+        activity:{...s.activity,[k]:(s.activity[k]||0)+1},
+        tasks:s.tasks.map(x=>x.id===id?{...x,done:true,xp,completedAt:Date.now(),doneKey:x.repeat?periodKey(x.repeat,new Date()):undefined}:x)};
+    })},
+    undoDone:()=>{
+      if(!undo)return;const u=undo;setUndo(null);
+      up(s=>{ // reverse exactly what that completion awarded; only while the XP is still unspent
+        const t=s.tasks.find(x=>x.id===u.id);if(!t||!t.done||s.earned-s.spent<u.xp)return s;
+        const a={...s.activity};a[u.k]=(a[u.k]||1)-1;if(a[u.k]<=0)delete a[u.k];
+        return{...s,earned:s.earned-u.xp,completedCount:s.completedCount-1,activity:a,
+          tasks:s.tasks.map(x=>x.id===u.id?{...x,done:false,xp:undefined,completedAt:undefined}:x)};
+      });
+    },
+    addReward:r=>up(s=>({...s,rewards:[...s.rewards,{...r,id:uid()}]})),
+    editReward:(id,r)=>up(s=>({...s,rewards:s.rewards.map(x=>x.id===id?{...x,...r}:x)})),
+    delReward:id=>up(s=>({...s,rewards:s.rewards.filter(x=>x.id!==id)})),
+    redeem:id=>up(s=>{
+      const r=s.rewards.find(x=>x.id===id);if(!r||s.earned-s.spent<r.cost)return s;
+      return{...s,spent:s.spent+r.cost,redeemed:[...s.redeemed,{id:uid(),name:r.name,cost:r.cost,at:Date.now()}]};
+    })
+  };
+  const showUndo=undo&&balance>=undo.xp&&S.tasks.some(x=>x.id===undo.id&&x.done);
+  return html`<div className="wrap">
+    <${Navbar} page=${page} balance=${balance} level=${info.level}/>
+    ${page==='tasks'?html`<${TasksPage} S=${S} api=${api} balance=${balance}/>`:page==='rewards'?html`<${RewardsPage} S=${S} balance=${balance} api=${api}/>`:html`<${ProfilePage} S=${S} info=${info} streak=${streak} today=${today}/>`}
+    ${showUndo&&html`<div className="toast" role="status"><span><strong>+${undo.xp} XP</strong> earned · ${undo.title}</span><${Btn} sm kind="plain" onClick=${api.undoDone}>Undo<//></div>`}
+  </div>`;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+</script>
+</body>
+</html>
